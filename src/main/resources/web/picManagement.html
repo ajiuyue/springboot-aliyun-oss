@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Guide哥的自定义图床</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/css/pic-management.css}">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+</head>
+<body>
+<ul class="layui-nav">
+    <li class="layui-nav-item"><a href="/oss/pictures/upload">上传图片</a></li>
+    <li class="layui-nav-item layui-this"><a href="/oss/pictures/management">图片管理</a></li>
+</ul>
+<p>
+    获取所有图片的url和key的后端已经写了，前端还没做。
+</p>
+<p>这里实际上可以做一个简单的相册管理解决我们存储照片的难题！如果我们想把相册功能做的更好的话，可以将图片地址存放在数据库，然后对每一张图片
+    我们都可以进行添加描述等操作。
+</p>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+</script>
+
+</body>
+</html>

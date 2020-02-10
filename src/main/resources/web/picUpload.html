@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Guide哥的自定义图床</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/css/pic-upload.css}">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+</head>
+<body>
+
+<ul class="layui-nav">
+    <li class="layui-nav-item layui-this"><a href="/oss/pictures/upload">上传图片</a></li>
+    <li class="layui-nav-item"><a href="/oss/pictures/management">图片管理</a></li>
+</ul>
+
+<blockquote class="layui-elem-quote custom-blockquote">
+    <span>SpringBoot+阿里云OSS实现简易自定义图床工具。</span>
+    <a style="font-weight: bold;color: #01AAED" href="https://github.com/Snailclimb/springboot-guide">点击访问可能是最适合你的Spring
+        Boot学习指南！</a>
+</blockquote>
+<div class="upload-picture-content">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>
+            <span style="color: rgba(0,0,0,.8);font-size: 1.5em">Guide哥</span>
+            <span style="color: grey; font-size: 1.3em">的自定义图床</span></legend>
+    </fieldset>
+
+    <div class="layui-upload-drag upload-click" id="upload-picture">
+        <i class="layui-icon layui-icon-upload" style="font-size: 150px"></i>
+        <p>点击上传，或将文件拖拽到此处</p>
+    </div>
+    <div class="layui-hide" id="uploadPicSuccess">
+        <div class="uploadPicView">
+            <p style="font-weight: bold; color: #01AAED">点击图片即可复制图片URL!</p>
+            <p style="font-weight: bold; color: #01AAED">点击删除按钮
+                <i style="color: rgb(237,99,55)" class="layui-icon layui-icon-delete" onclick=deleteFileByKey()></i>即可删除！
+            </p>
+            <hr>
+            <img src="" alt="上传成功后渲染" style="max-width: 50%" onclick=copyUrl()>
+        </div>
+    </div>
+
+</div>
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    var picUrl = '';
+    var picKey = '';
+    layui.use('upload', function () {
+        var upload = layui.upload;
+
+        //拖拽上传
+        upload.render({
+            elem: '#upload-picture'
+            , url: '/oss/pictures',
+            method: 'post',
+            before: function () {
+                console.error("before")
+                layer.load(); //上传loading
+            }
+            , done: function (res) {
+                console.error(res)
+                layer.closeAll('loading')
+                layer.msg('上传图片成功');
+                layui.$('#uploadPicSuccess').removeClass('layui-hide').find('img').attr('src', res.data.picUrl);
+                picUrl = res.data.picUrl;
+                picKey = res.data.key;
+            },
+            error: function (res) {
+                layer.closeAll('loading'); //关闭loading
+            }
+        });
+    });
+
+    function deleteFileByKey() {
+        console.error(picKey)
+        layer.confirm('真的要删除么？', function (index) {
+            layui.use(['layer'], function () {
+                var $ = layui.jquery
+                $.ajax({
+                    url: '/oss/pictures?picKey=' + picKey,
+                    type: 'DELETE',
+                    success: function () {
+                        layer.msg('删除图片成功！');
+                        layui.$('#uploadPicSuccess').addClass('layui-hide');
+                    }
+                });
+            })
+            layer.close(index);
+        })
+
+    }
+
+    function copyUrl() {
+        var input = document.createElement('input');
+        document.body.appendChild(input);
+        input.setAttribute('value', picUrl);
+        input.select();
+        if (document.execCommand('copy')) {
+            document.execCommand('copy');
+            layer.msg('复制图片地址成功');
+        }
+        document.body.removeChild(input);
+    }
+
+</script>
+
+</body>
+</html>
